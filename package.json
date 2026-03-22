@@ -1,0 +1,37 @@
+{
+  "name": "ito",
+  "version": "0.1.0",
+  "description": "糸 — A minimal agent harness framework",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "lint": "eslint src --ext .ts",
+    "example": "ts-node examples/basic.ts"
+  },
+  "keywords": [
+    "agent",
+    "harness",
+    "llm",
+    "ai",
+    "tool-use"
+  ],
+  "author": "Hiyori",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.0",
+    "ts-node": "^10.9.2",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.11",
+    "ts-jest": "^29.1.1"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
