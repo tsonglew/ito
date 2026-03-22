@@ -13,13 +13,15 @@ import {
   ToolContext,
   LLMResponse,
 } from '../types';
+import { ToolExecutor, ExecutorOptions } from '../executor';
 
 export class ItoHarness implements Harness {
   config: HarnessConfig;
   state: HarnessState;
   tools: Map<string, ToolDefinition>;
+  private executor: ToolExecutor;
 
-  constructor(config: HarnessConfig) {
+  constructor(config: HarnessConfig & { executorOptions?: ExecutorOptions }) {
     this.config = {
       maxIterations: 10,
       maxTokens: 4096,
@@ -33,6 +35,7 @@ export class ItoHarness implements Harness {
     };
 
     this.tools = new Map();
+    this.executor = new ToolExecutor(config.executorOptions);
 
     // Add system prompt if provided
     if (this.config.systemPrompt) {
@@ -112,20 +115,41 @@ export class ItoHarness implements Harness {
       }
 
       if (response.stop_reason === 'tool_use' && response.tool_calls) {
-        // Execute all tool calls
-        const results = await Promise.all(
-          response.tool_calls.map(tc => this.executeTool(tc.id, tc.name, tc.arguments))
-        );
+        // Execute all tool calls in parallel
+        const toolCalls = response.tool_calls.map(tc => {
+          const tool = this.tools.get(tc.name);
+          return {
+            id: tc.id,
+            tool: tool!,
+            args: tc.arguments,
+            context: {
+              harness: this,
+              message: this.state.messages[this.state.messages.length - 1],
+            } as ToolContext,
+          };
+        }).filter(tc => tc.tool); // Filter out unknown tools
+
+        // Execute in parallel
+        const execResult = await this.executor.executeParallel(toolCalls);
+
+        // Notify callbacks
+        for (const result of execResult.results) {
+          if (result.result.is_error) {
+            this.config.onToolResult?.(result.toolName, `Error: ${result.result.content}`);
+          } else {
+            this.config.onToolResult?.(result.toolName, result.result.content);
+          }
+        }
 
         // Add tool results to messages
-        for (const result of results) {
+        for (const result of execResult.results) {
           const toolResultMessage: Message = {
             role: 'tool',
             content: [{
               type: 'tool_result',
-              tool_call_id: result.tool_call_id,
-              content: result.content,
-              is_error: result.is_error,
+              tool_call_id: result.toolCallId,
+              content: result.result.content,
+              is_error: result.result.is_error,
             }],
           };
           this.state.messages.push(toolResultMessage);

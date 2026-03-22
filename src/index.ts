@@ -22,6 +22,10 @@ export type { TokenCounter, TokenCountStrategy } from './context/tokenizer';
 export { ContextManager, createContextManager } from './context/manager';
 export type { ContextManagerConfig, TruncationResult } from './context/manager';
 
+// Tool Executor
+export { ToolExecutor, createToolExecutor } from './executor';
+export type { ExecutorOptions, ExecutionResult, ParallelExecutionResult } from './executor';
+
 // Type exports
 export type {
   // Messages
