@@ -8,12 +8,19 @@
 // Core exports
 export { ItoHarness, createHarness } from './core/harness';
 export { ToolBuilder, ToolRegistry, tool, exampleTools } from './tools/registry';
+
+// LLM Providers
 export { OpenAIProvider, createOpenAIProvider } from './llm/openai';
 export { AnthropicProvider, createAnthropicProvider } from './llm/anthropic';
 export { OllamaProvider, createOllamaProvider, listOllamaModels } from './llm/ollama';
+export { createProvider, ProviderRegistry } from './llm/factory';
+export type { ProviderType } from './llm/factory';
 
-// Provider factory
-export { createProvider, ProviderType } from './llm/factory';
+// Context Management
+export { SimpleTokenCounter, OpenAITokenCounter, createTokenCounter } from './context/tokenizer';
+export type { TokenCounter, TokenCountStrategy } from './context/tokenizer';
+export { ContextManager, createContextManager } from './context/manager';
+export type { ContextManagerConfig, TruncationResult } from './context/manager';
 
 // Type exports
 export type {
@@ -45,9 +52,6 @@ export type {
   // Executor
   ExecutorConfig,
   Executor,
-
-  // Context
-  ContextManager,
 
   // Utils
   DeepPartial,
