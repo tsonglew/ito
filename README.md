@@ -11,7 +11,59 @@
 - 🔌 **可扩展** — 支持任意 LLM provider
 - 🛠️ **工具系统** — 流式 API 定义工具
 - 💬 **消息管理** — 结构化消息格式
-- ⚡ **零依赖** — 只需要 Zod
+- ⚡ **轻量依赖** — 只需要 Zod
+
+## 多 Provider 支持
+
+ito 支持多种 LLM provider：
+
+### OpenAI
+
+```typescript
+import { createOpenAIProvider } from 'ito';
+
+const provider = createOpenAIProvider({
+  apiKey: process.env.OPENAI_API_KEY!,
+  model: 'gpt-4o-mini',
+});
+```
+
+### Anthropic Claude
+
+```typescript
+import { createAnthropicProvider } from 'ito';
+
+const provider = createAnthropicProvider({
+  apiKey: process.env.ANTHROPIC_API_KEY!,
+  model: 'claude-3-5-sonnet-20241022',
+});
+```
+
+### Ollama (本地模型)
+
+```typescript
+import { createOllamaProvider, listOllamaModels } from 'ito';
+
+// 列出可用模型
+const models = await listOllamaModels();
+console.log(models); // ['llama3.2', 'mistral', ...]
+
+const provider = createOllamaProvider({
+  model: 'llama3.2',
+  baseUrl: 'http://localhost:11434', // 可选
+});
+```
+
+### 使用工厂函数
+
+```typescript
+import { createProvider } from 'ito';
+
+const provider = createProvider('openai', {
+  apiKey: process.env.OPENAI_API_KEY!,
+  model: 'gpt-4o-mini',
+});
+```
 
 ## 快速开始
 

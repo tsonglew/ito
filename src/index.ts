@@ -9,6 +9,11 @@
 export { ItoHarness, createHarness } from './core/harness';
 export { ToolBuilder, ToolRegistry, tool, exampleTools } from './tools/registry';
 export { OpenAIProvider, createOpenAIProvider } from './llm/openai';
+export { AnthropicProvider, createAnthropicProvider } from './llm/anthropic';
+export { OllamaProvider, createOllamaProvider, listOllamaModels } from './llm/ollama';
+
+// Provider factory
+export { createProvider, ProviderType } from './llm/factory';
 
 // Type exports
 export type {
